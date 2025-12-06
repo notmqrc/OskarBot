@@ -72,7 +72,7 @@ for (const file of eventFiles) {
   client.events.set(event.eventType, event);
 }
 
-async function playMeowOnGuilds() {
+async function playPurrOnGuilds() {
   const guilds = client.guilds.cache.filter(
     (guild) => guild.members.cache.filter((member) => member.user.bot).size > 0
   );
@@ -83,12 +83,9 @@ async function playMeowOnGuilds() {
         console.log("Has members");
         const randomValue = Math.random();
         console.log(randomValue);
-        if (channel.name === "121.5") {
-          console.log("Meowing on guard!");
-        }
         if (randomValue < 0.25 || channel.name === "121.5") {
-          await playAudio(channel, "assets/meow.mp3");
-          console.log("Meowed successfully!");
+          await playAudio(channel, "assets/purr.mp3");
+          console.log("Purred successfully!");
         }
       }
     });
@@ -97,8 +94,8 @@ async function playMeowOnGuilds() {
 
 client.once(Events.ClientReady, () => {
   console.log("Ready!");
-  setTimeout(playMeowOnGuilds, 1000 * 60 * 5);
-  playMeowOnGuilds();
+  setInterval(playPurrOnGuilds, 1000 * 60 * 5);
+  playPurrOnGuilds();
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
