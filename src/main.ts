@@ -94,8 +94,8 @@ async function playPurrOnGuilds() {
 
 client.once(Events.ClientReady, () => {
   console.log("Ready!");
-  setInterval(playPurrOnGuilds, 1000 * 60 * 5);
-  playPurrOnGuilds();
+  // setInterval(playPurrOnGuilds, 1000 * 60 * 5);
+  // playPurrOnGuilds();
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
