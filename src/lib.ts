@@ -14,8 +14,13 @@ import { playAudioPlaylist } from "./utils/voice.js";
 import { getVoiceConnection } from "@discordjs/voice";
 import NodeID3 from "node-id3";
 
-const googleClient = createGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+const MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
+
+const groqClient = createGroq({
+
+
+  apiKey: process.env.GROQ_API_KEY,
+
 });
 
 const emojis: Record<string, { completeEmoji: string; description: string }> = {
@@ -101,8 +106,7 @@ Whenever a user requests:
  - **to stop playing music**
  - **to tell you what song Oskar is playing**
  You MUST use the corresponding tool. 
- Using the sendMessageTool is optional.
-`;
+On EVERY request you MUST use a tool. Not using a tool will lead to a request failure.`;
 
 const systemPrompt = basePrompt + toolsPrompt;
 
@@ -112,32 +116,32 @@ function getMessageContentOrParts(message: Message) {
   if (message.author.bot) {
     return {
       content: JSON.stringify({
-        content: message.content,
-        author: message.author,
-        cleanContent: message.cleanContent,
-        attachments: message.attachments.map((attachment) => ({
-          size: attachment.size,
-        })),
-        id: message.id,
-      }),
+          author: {
+            username: message.author.username,
+            displayName: message.author.displayName,
+            id: message.author.id,
+          },
+          content: message.cleanContent,
+        }),
       role: "assistant" as const,
     };
   }
-  console.log(message.cleanContent);
   return {
     role: "user" as const,
     content: [
       {
         type: "text",
         text: JSON.stringify({
-          author: message.author,
-          cleanContent: message.cleanContent,
-          attachments: message.attachments.map((attachment) => ({
-            size: attachment.size,
-          })),
+          author: {
+            username: message.author.username,
+            displayName: message.author.displayName,
+            id: message.author.id,
+          },
+          content: message.cleanContent,
           id: message.id,
         }),
       } as TextPart,
+      /*
       ...(message.attachments.map((attachment) => {
         const isImage = attachment.contentType?.startsWith("image");
         if (isImage) {
@@ -153,9 +157,11 @@ function getMessageContentOrParts(message: Message) {
           mimeType: attachment.contentType,
         };
       }) as (ImagePart | FilePart)[]),
+      */
     ],
   };
 }
+
 
 export async function genMistyOutput(
   messages: Message[],
@@ -268,7 +274,10 @@ export async function genMistyOutput(
     const text = response.text;
     const toolResponse = response.toolResults[0]?.output;
     if (!toolResponse) {
-      return text;
+      return makeCompleteEmoji(text).replace(
+        /\b(?:i(?:['’])?m|i am)\s+a\s+d(o|0)g\w*\b([.!?])?/gi,
+        "I'm not a dog$1"
+      );
     }
     const { message } = toolResponse as {
       message: string;
