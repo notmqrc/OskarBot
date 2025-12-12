@@ -1,4 +1,4 @@
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createGroq } from "@ai-sdk/groq";
 import {
   generateText,
   tool,
@@ -256,7 +256,7 @@ export async function genMistyOutput(
 
   try {
     const response = await generateText({
-      model: googleClient("gemini-2.0-flash-lite"),
+      model: groqClient("gemini-2.0-flash-lite"),
       system: systemPrompt,
       messages: messages
         .reverse()
