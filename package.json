@@ -5,8 +5,6 @@
   "type": "module",
   "main": "src/main.ts",
   "scripts": {
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
     "dev": "chokidar \"src/commands/**/*.{ts,tsx,js}\" \"src/events/*.{ts,tsx,js}\" \"src/*.ts\" -c \"pnpm tsx src/main.ts\" --verbose --initial"
   },
   "keywords": [],
