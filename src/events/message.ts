@@ -67,7 +67,7 @@ export default {
     }
     const messages = await recursivelyFetchMessage(message, 10);
 
-    const output = await genMistyOutput(messages, client, message);
+    const output = await genMistyOutput(messages, client, message) ?? "Failed to generate";
     await message.reply({
         content: output
           .replace("@everyone", "I TRIED TO PING EVERYONE AND FAILED LMFAOOOOO")
